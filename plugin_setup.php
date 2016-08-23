@@ -127,15 +127,6 @@ if($_POST['INITIALZE_SCORES'] == "on" || $_POST['INITIALZE_SCORES'] == "1" || $_
 	
 	
 
-//if($REPLY_TEXT == "") {
-//	$REPLY_TEXT = "Thank you for your message, it has been added to the Queue";
-//}
-
-	
-//	if((int)$LAST_READ == 0 || $LAST_READ == "") {
-//		$LAST_READ=0;
-//	}
-
 ?>
 
 <html>
@@ -198,12 +189,12 @@ echo "<p/> \n";
 
 echo "ENABLE PLUGIN: ";
 
-if($ENABLED == 1 || $ENABLED == "on") {
-		echo "<input type=\"checkbox\" checked name=\"ENABLED\"> \n";
-//PrintSettingCheckbox("Radio Station", "ENABLED", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = "");
-	} else {
-		echo "<input type=\"checkbox\"  name=\"ENABLED\"> \n";
-}
+//if($ENABLED == 1 || $ENABLED == "on") {
+//		echo "<input type=\"checkbox\" checked name=\"ENABLED\"> \n";
+PrintSettingCheckbox("Scoreboard", "ENABLED", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = "");
+//	} else {
+//		echo "<input type=\"checkbox\"  name=\"ENABLED\"> \n";
+//}
 
 echo "<p/> \n";
 

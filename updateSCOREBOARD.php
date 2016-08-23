@@ -20,7 +20,7 @@ include_once 'COLORS.inc.php';
 require ("lock.helper.php");
 
 define('LOCK_DIR', '/tmp/');
-define('LOCK_SUFFIX', '.lock');
+define('LOCK_SUFFIX', $pluginName.'.lock');
 
 
 
@@ -68,7 +68,7 @@ foreach ($pluginSettings as $key => $value) {
 //echo "Enabled: ".$ENABLED."<br/> \n";
 
 
-if($ENABLED != "on" && $ENABLED != "1") {
+if($ENABLED != "ON" && $ENABLED != "1") {
 	logEntry("Plugin Status: DISABLED Please enable in Plugin Setup to use & Restart FPPD Daemon");
 	lockHelper::unlock();
 	exit(0);

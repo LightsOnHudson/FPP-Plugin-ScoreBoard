@@ -10,9 +10,13 @@ $MESSAGE_QUEUE_PLUGIN_ENABLED=false;
 $DEBUG=true;
 
 $skipJSsettings = 1;
-include_once("/opt/fpp/www/config.php");
-include_once("/opt/fpp/www/common.php");
+$fppWWWPath = '/opt/fpp/www/';
+set_include_path(get_include_path() . PATH_SEPARATOR . $fppWWWPath);
+
+require("common.php");
+
 include_once "functions.inc.php";
+include_once "commonFunctions.inc.php";
 include_once 'SPORTS_ABBREVIATIONS.inc.php';
 include_once 'COLORS.inc.php';
 
