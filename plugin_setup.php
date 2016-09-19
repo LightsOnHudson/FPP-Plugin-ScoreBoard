@@ -59,7 +59,7 @@ if(file_exists($pluginDirectory."/".$MATRIX_MESSAGE_PLUGIN_NAME."/".$MATRIX_FUNC
 
 $gitURL = "https://github.com/LightsOnHudson/FPP-Plugin-Scoreboard.git";
 //createSMSSequenceFiles();
-
+$pluginUpdateFile = $settings['pluginDirectory']."/".$pluginName."/"."pluginUpdate.inc";
 
 if(isset($_POST['submit']))
 {
@@ -190,67 +190,22 @@ echo "<p/> \n";
 
 echo "ENABLE PLUGIN: ";
 
-//if($ENABLED == 1 || $ENABLED == "on") {
-//		echo "<input type=\"checkbox\" checked name=\"ENABLED\"> \n";
 PrintSettingCheckbox("Scoreboard", "ENABLED", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = "");
-//	} else {
-//		echo "<input type=\"checkbox\"  name=\"ENABLED\"> \n";
-//}
+
 
 echo "<p/> \n";
 
 echo "MATRIX FONT (Installed inside MatrixMessage Plugin): ";
-printMatrixFontOptions("FONT",$FONT);
 
-function printMatrixFontOptions($selectName,$selected)
-{
-	global $settings,$MATRIX_MESSAGE_PLUGIN_NAME;
+echo "Font:  \n";
+printFontsInstalled("FONT",$FONT);
 
-	echo "<select name=\"".$selectName."\">";
-
-	$matrixFonts = scandir($settings['pluginDirectory']."/".$MATRIX_MESSAGE_PLUGIN_NAME."/"."fonts/");
-	sort($matrixFonts);
-
-	foreach($matrixFonts as $fontFile)
-	{
-		if($fontFile != '.' && $fontFile != '..')
-		{
-			if($fontFile == $selected) {
-				echo "<option selected value=\"" . $fontFile . "\">" . $fontFile . "</option>";
-			} else {
-				echo "<option value=\"" . $fontFile . "\">" . $fontFile . "</option>";
-				}
-		}
-	}
-	echo "</select>";
-}
-
-echo " \n";
+echo "<p/> \n";
 echo "Font Size: \n";
+printFontSizes("FONT_SIZE",$FONT_SIZE);
 
-printMatrixFontSizeOptions("FONT_SIZE", $FONT_SIZE);
 
-function printMatrixFontSizeOptions($selectName,$selected) {
 
-//FIXME
-//allow the user to use the entire size of their matrix as font size... ???
-	
-global $MAX_FONT_SIZE;
-
-	echo "<select name=\"".$selectName."\">";
-
-	
-for($i=0;$i<=$MAX_FONT_SIZE;$i++) {
-
-	if($i == $selected) {
-			echo "<option selected value=\"" . $i . "\">" . $i . "</option>";
-		} else {
-			echo "<option value=\"" . $i . "\">" . $i . "</option>";
-		}
-	
-}
-echo "</select>";
-}
 
 echo "<p/> \n";
 echo "Sport Scores to Display: ";

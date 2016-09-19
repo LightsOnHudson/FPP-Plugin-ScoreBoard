@@ -1,5 +1,84 @@
 <?php
 
+function printFontSizes($ELEMENT, $FONT_SIZE)
+
+
+{
+
+	global $PLUGINS,$pluginDirectory;
+
+	$MAX_FONT_SIZE = 64;
+
+	echo "<select name=\"".$ELEMENT."\">";
+
+
+	for($i=0;$i<=$MAX_FONT_SIZE-1;$i++) {
+
+		if($i == $FONT_SIZE) {
+
+			echo "<option selected value=\"" . $i. "\">" . $i. "</option>";
+		} else {
+			echo "<option value=\"" . $i. "\">" . $i. "</option>";
+		}
+	}
+	echo "</select>";
+}
+
+
+
+
+function printFontsInstalled($ELEMENT, $FONT)
+
+
+{
+
+	// this uses the fpp-matrix tools plugin to get the fonts that it can use!
+
+
+	global $DEBUG,$PLUGINS,$pluginDirectory, $fpp_matrixtools_Plugin_Script, $fpp_matrixtools_Plugin;
+
+	//  $fpp_matrixtools_Plugin = "fpp-matrixtools";
+	// $fpp_matrixtools_Plugin_Script = "scripts/matrixtools";
+
+
+	$fontsDirectory = "/usr/share/fonts/truetype/";
+
+	//$FONTS_LIST_CMD = "/usr/bin/fc-list";
+
+	//$FONT_LIST = system($FONTS_LIST_CMD);
+	//if($DEBUG)
+	//	print_r($FONT_LIST);
+
+	// $FONTS_INSTALLED = directoryToArray($fontsDirectory, true);//, $recursive)($pluginDirectory);
+
+	$MatrixToolsFontsCMD = $pluginDirectory."/".$fpp_matrixtools_Plugin . "/".$fpp_matrixtools_Plugin_Script. " --getfontlist";
+
+	exec($MatrixToolsFontsCMD, $fontsList);
+	//   print_r($fontsList);
+
+	 
+	// $FONTS_INSTALLED = explode(" ",$fontsList);
+
+	//  print_r($FONTS_INSTALLED);
+	//print_r($PLUGINS_READ);
+
+	echo "<select name=\"".$ELEMENT."\">";
+
+
+	for($i=1;$i<=count($fontsList)-1;$i++) {
+		//	$FONTINFO = pathinfo($FONTS_INSTALLED[$i]);
+		//         $FONTS_INSTALLED_TEMP = basename($FONTS_INSTALLED[$i],'.'.$FONTINFO['extension']);
+
+		if($fontsList[$i] == $FONT) {
+				
+			echo "<option selected value=\"" . $FONT . "\">" . $FONT . "</option>";
+		} else {
+			echo "<option value=\"" . $fontsList[$i] . "\">" . $fontsList[$i] . "</option>";
+		}
+	}
+	echo "</select>";
+}
+
 function matrixOutline($matrix,$color) {
 
 	global $COLORS_PER_PIXEL,$FPPMM_BINARY,$DEBUG;
