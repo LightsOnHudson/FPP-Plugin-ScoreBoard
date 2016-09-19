@@ -57,6 +57,7 @@ if(file_exists($pluginDirectory."/".$MATRIX_MESSAGE_PLUGIN_NAME."/".$MATRIX_FUNC
 	exit(0);
 }
 
+$gitURL = "https://github.com/LightsOnHudson/FPP-Plugin-Scoreboard.git";
 //createSMSSequenceFiles();
 
 
@@ -299,12 +300,19 @@ printColorSelect("AWAY_TEAM_COLOR",$AWAY_TEAM_COLOR);
 ?>
 <p/>
 <input id="submit_button" name="submit" type="submit" class="buttons" value="Save Config">
-
+<?
+ if(file_exists($pluginUpdateFile))
+ {
+ 	//echo "updating plugin included";
+	include $pluginUpdateFile;
+}
+?>
 </form>
 
 
-<p>To report a bug, please file it against the sms Control plugin project on Git: https://github.com/LightsOnHudson/FPP-SMS
 
+
+<p>To report a bug, please file it against the sms Control plugin project on Git:<? echo $gitURL;?> 
 </fieldset>
 </div>
 <br />
