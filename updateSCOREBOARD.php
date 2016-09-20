@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-error_reporting(0);
+//error_reporting(0);
 
 $pluginName ="ScoreBoard";
 $myPid = getmypid();
@@ -27,6 +27,7 @@ define('LOCK_SUFFIX', $pluginName.'.lock');
 $SPORTS_TICKER_PLUGIN_NAME="SportsTicker";
 $SPORTS_TICKER_SPORTS_FILE="SPORTS.inc.php";
 
+
 $MATRIX_MESSAGE_PLUGIN_NAME = "MatrixMessage";
 $fpp_matrixtools_Plugin = "fpp-matrixtools";
 $fpp_matrixtools_Plugin_Script = "scripts/matrixtools";
@@ -35,15 +36,18 @@ $FPP_MATRIX_PLUGIN_ENABLED=false;
 $MAX_SCORE_DIGITS=3;
 
 //$FONT = "advanced_led_board-7.ttf";
-$FONT = "calibri.ttf";
-$FONT_PATH = $pluginDirectory."/".$MATRIX_MESSAGE_PLUGIN_NAME."/fonts/";
+//$FONT = "calibri.ttf";
+//$FONT_PATH = $pluginDirectory."/".$MATRIX_MESSAGE_PLUGIN_NAME."/fonts/";
 
 //the only font size that works is 9 or greater with this font
-$FONT_SIZE = "9";
+//$FONT_SIZE = "9";
 
 $MATRIX_FUNCTIONS_FILE = "MatrixFunctions.inc.php";
 
 $logFile = $settings['logDirectory']."/".$pluginName.".log";
+
+logEntry("Running UpdateScoreboard.php");
+
 
 
 if(($pid = lockHelper::lock()) === FALSE) {
@@ -52,14 +56,23 @@ if(($pid = lockHelper::lock()) === FALSE) {
 }
 
 $pluginConfigFile = $settings['configDirectory'] . "/plugin." .$pluginName;
+
+
+
 if (file_exists($pluginConfigFile))
 	$pluginSettings = parse_ini_file($pluginConfigFile);
+
+	$DEBUG = urldecode($pluginSettings['DEBUG']);
 //get the block size of the blocks in use
 foreach ($pluginSettings as $key => $value) {
 
 	//	echo "Key: ".$key." " .$value."\n";
 
 	${$key} = urldecode($value);
+	if($DEBUG) {
+		logEntry(${$key}." = ".urldecode($value));
+		
+	}
 
 }
 //arg0 is  the program
@@ -77,10 +90,10 @@ if($ENABLED != "ON" && $ENABLED != "1") {
 $messageQueuePluginPath = $pluginDirectory."/".$messageQueue_Plugin."/";
 
 $messageQueueFile = urldecode(ReadSettingFromFile("MESSAGE_FILE",$messageQueue_Plugin));
+
 if($DEBUG) {
-	$messageQueueFile = "/home/pi/media/plugindata/FPP.MessageQueue.test";
+	logEntry("Using message queue file: ".$messageQueueFile);
 }
-logEntry("Using message queue file: ".$messageQueueFile);
 
 if(file_exists($messageQueuePluginPath."functions.inc.php"))
 {
@@ -129,7 +142,7 @@ if(file_exists($pluginDirectory."/". $fpp_matrixtools_Plugin."/".$fpp_matrixtool
 //print_r($pluginSettings);
 
 
-$FONT="calibri.ttf";
+//$FONT="calibri.ttf";
 
 //echo "Home team: ".$pluginSettings['HOME_TEAM']."\n";
 
@@ -175,8 +188,8 @@ $sportsScoresData = getNewPluginMessages($SPORTS_TICKER_PLUGIN_NAME,$pluginName)
 //$sportsScoresData[0] = "1421171858| NFL++%7C+Baltimore+31+++New+England+35+%28END+OF+4TH%29+%7C+Carolina+17+++Seattle+31+%28END+OF+4TH%29+%7C+Dallas+21+++Green+Bay+26+%28END+OF+4TH%29+%7C+Indianapolis+24+++Denver+13+%28FINAL%29 | SportsTicker | NFL";
 
 //echo $sportsScoresData."\n";
-if($DEBUG)
-	print_r($sportsScoresData);
+//if($DEBUG) 
+	//print_r($sportsScoresData);
 //have to split on the configured sports score ticker separator :)
 $SPORTS_TICKER_SEPARATOR = urldecode(ReadSettingFromFile("SEPARATOR","SportsTicker"));
 $sportsScoreIndex=0;
@@ -193,16 +206,17 @@ for($sportsMessageIndex =0;$sportsMessageIndex <= count($sportsScoresData)-1;$sp
 //index 0 will be the SPORT :) yay..we can use this later.
 
 //look for both teams in the same line!!!!
-	$sportsScoreIndex=0;
-	$SCORES_READ=false;
 
+if($DEBUG) {
+	logEntry("Looking for sports scores in Sports Ticker Data");
+}
 for($sportsScoreIndex = 0;$sportsScoreIndex<=count($sportsScoresTmp)-1;$sportsScoreIndex++) {
 	
 	
 
 	if ((strpos($sportsScoresTmp[$sportsScoreIndex],$HOME_TEAM) !== false) && (strpos($sportsScoresTmp[$sportsScoreIndex],$AWAY_TEAM) !== false)) {
 		if($DEBUG) {
-			echo "Both teams in the line : Index: ".$sportsScoreIndex."\n";
+			logEntry( "Both teams in the line : Index: ".$sportsScoreIndex);
 		}
 		$SCORES_READ=true;
 		$scoreIndex = $sportsScoreIndex;
@@ -219,8 +233,8 @@ for($sportsScoreIndex = 0;$sportsScoreIndex<=count($sportsScoresTmp)-1;$sportsSc
 }
 
 if($DEBUG) {
-	echo "home: ".(int)$HOME_SCORE."\n";
-	echo "away: ".(int)$AWAY_SCORE."\n";
+	logEntry("home score".(int)$HOME_SCORE);
+	logEntry("away: score".(int)$AWAY_SCORE);
 }
 if($SCORES_READ) {
 	//echo "we got a valid score line with the teams: Index: ".$sportsScoreIndex."\n";
@@ -233,6 +247,7 @@ if($SCORES_READ) {
 	$NEW_AWAY_SCORE = getSportScore($sportsScoresTmp[$scoreIndex], $AWAY_TEAM);
 	//if($NEW_AWAY_SCORE== "") {
 	//	$NEW_AWAY_SCORE="";
+	$GAME_TEXT = getSportStatus($sportsScoresTmp[$scoreIndex]);
 	//}
 	
 } else {
@@ -291,17 +306,18 @@ $AWAY_SCORE = str_pad($AWAY_SCORE, $MAX_SCORE_DIGITS, ' ', STR_PAD_LEFT);
 $HOME_SCORE = str_pad($HOME_SCORE, $MAX_SCORE_DIGITS, ' ', STR_PAD_LEFT);
 
 if($DEBUG) {
-	echo "away score: ".$AWAY_SCORE."\n";
-	echo "home score: ".$HOME_SCORE."\n";
+	logEntry("away score: ".$AWAY_SCORE);
+	logEntry( "home score: ".$HOME_SCORE);
 }
+
 //temporarly reset the last read of sporst ticker for testing
-WriteSettingtoFile("LAST_READ","0",$SPORTS_TICKER_PLUGIN_NAME);
+//WriteSettingtoFile("LAST_READ","0",$SPORTS_TICKER_PLUGIN_NAME);
 
 if($NEW_SCORES) {
 	logEntry("We got new scores for one or both teams: UPdating scoreboard: HOME (".$HOME_TEAM."): ".$HOME_SCORE." AWAY (".$AWAY_TEAM."): ".$AWAY_SCORE);
 	
 	//need to nitialize if there are NO scores at all //just put up the names
-} elseif((int)$HOME_SCORE ==0 && (int)$AWAY_SCORE ==0) {
+} elseif((int)$HOME_SCORE == 0 && (int)$AWAY_SCORE == 0) {
 	logEntry("initializing just names on scoreboard");
 	
 } else {
@@ -316,7 +332,7 @@ if($NEW_SCORES) {
 
 //HOME MATRIX COORDINATES
 //just use 0,0 for now
-
+$FONT_PADDING = 2;
 //if using the same matrix, then find the position of the home team and away team
 if($HOME_TEAM_MATRIX == $AWAY_TEAM_MATRIX && $HOME_TEAM_SCORE_MATRIX == $AWAY_TEAM_SCORE_MATRIX) 
 {
@@ -324,10 +340,29 @@ if($HOME_TEAM_MATRIX == $AWAY_TEAM_MATRIX && $HOME_TEAM_SCORE_MATRIX == $AWAY_TE
 	$AWAY_MATRIX_POS=getMatrixPosition($AWAY_TEAM_MATRIX,"AWAY");
 	$HOME_MATRIX_POS=getMatrixPosition($HOME_TEAM_MATRIX,"HOME");
 	
+	if($DEBUG) {
+		logEntry("Font Size = ".$FONT_SIZE);
+		logEntry("FOnt padding = ".$FONT_PADDING);
+	}
 	
+
 	//the scores have the same position, just on a different matrix.
-	$HOME_SCORE_MATRIX_POS = $HOME_MATRIX_POS;
-	$AWAY_SCORE_MATRIX_POS = $AWAY_MATRIX_POS;
+	$HOME_SCORE_MATRIX_POS = $HOME_MATRIX_POS.",".(int)($FONT_SIZE+$FONT_PADDING);
+	
+	$AWAY_SCORE_MATRIX_POS = $AWAY_MATRIX_POS.",".(int)($FONT_SIZE+$FONT_PADDING);
+	
+	if($DEBUG) {
+		logEntry("updating text as well");
+		$TEXT_POS = "0,";
+	
+		//the position is below the score of the home team matrix  left justified / can adjust later!
+		$TEXT_POS .= (int)$HOME_SCORE_MATRIX_POS + 2*(int)$FONT_SIZE + (int)$FONT_PADDING;
+	
+		logEntry("Text Pos: ".$TEXT_POS);
+	}
+	
+	$HOME_MATRIX_POS .= ",0";
+	$AWAY_MATRIX_POS .= ",0";
 	
 } else {
 	logEntry("individual matrixes for home and away");
@@ -366,19 +401,37 @@ clearMatrix($HOME_TEAM_SCORE_MATRIX);
 clearMatrix($AWAY_TEAM_SCORE_MATRIX);
 
 $MAX_ABBR_DIGITS=3;
+
+
 $ABBR_HOME_TEAM = str_pad($ABBR_HOME_TEAM, $MAX_ABBR_DIGITS, ' ', STR_PAD_LEFT);
 $ABBR_AWAY_TEAM = str_pad($ABBR_AWAY_TEAM, $MAX_ABBR_DIGITS, ' ', STR_PAD_LEFT);
 
-
+$MAX_SCORE_DIGITS=2;
+if(trim($HOME_SCORE) == "") {
+	$HOME_SCORE = "0";
+}
+if(trim($AWAY_SCORE) == "") {
+	$AWAY_SCORE = "0";
+}
+$HOME_SCORE = str_pad($HOME_SCORE, $MAX_SCORE_DIGITS, '0', STR_PAD_LEFT);
+$AWAY_SCORE = str_pad($AWAY_SCORE, $MAX_SCORE_DIGITS, '0', STR_PAD_LEFT);
 
 //updateScoreOnMatrix("UPPER-LEFT", $ABBR_HOME_TEAM,$HOME_SCORE,$HOME_MATRIX_POS,$HOME_TEAM_COLOR);
 //updateScoreOnMatrix($HOME_TEAM_MATRIX, $ABBR_HOME_TEAM,$HOME_SCORE,$HOME_MATRIX_POS,$HOME_TEAM_COLOR);
-updateScoreOnMatrix($HOME_TEAM_MATRIX, $ABBR_HOME_TEAM,$HOME_SCORE,$HOME_TEAM_SCORE_MATRIX,$HOME_TEAM_COLOR,$HOME_MATRIX_POS,$HOME_SCORE_MATRIX_POS);
+updateScoreOnMatrix($HOME_TEAM_MATRIX, $ABBR_HOME_TEAM,$HOME_SCORE,$HOME_TEAM_SCORE_MATRIX,$HOME_TEAM_COLOR,$HOME_MATRIX_POS,$HOME_SCORE_MATRIX_POS, $FONT_SIZE);
 
 //updateScoreOnMatrix("BOTTOM-LEFT", $ABBR_AWAY_TEAM,$AWAY_SCORE,$AWAY_MATRIX_POS,$AWAY_TEAM_COLOR);
 //updateScoreOnMatrix($AWAY_TEAM_MATRIX, $ABBR_AWAY_TEAM,$AWAY_SCORE,$AWAY_MATRIX_POS,$AWAY_TEAM_COLOR);
-updateScoreOnMatrix($AWAY_TEAM_MATRIX, $ABBR_AWAY_TEAM,$AWAY_SCORE,$AWAY_TEAM_SCORE_MATRIX,$AWAY_TEAM_COLOR,$AWAY_MATRIX_POS,$AWAY_SCORE_MATRIX_POS);
-//renable while when we are done
+updateScoreOnMatrix($AWAY_TEAM_MATRIX, $ABBR_AWAY_TEAM,$AWAY_SCORE,$AWAY_TEAM_SCORE_MATRIX,$AWAY_TEAM_COLOR,$AWAY_MATRIX_POS,$AWAY_SCORE_MATRIX_POS, $FONT_SIZE);
+
+//update game status (FINAL...etc.)
+
+if($DEBUG) {
+	logEntry("Writing Game Status Text");
+}	
+	//updateScoreOnMatrix($HOME_TEAM_MATRIX, $GAME_TEXT,"","","red",$TEXT_POS,"","", "","10");//, $team, $score, $score_matrix, $color, 0", 0")
+
+	//renable while when we are done
 enableMatrixToolOutput($HOME_TEAM_MATRIX);
 enableMatrixToolOutput($AWAY_TEAM_MATRIX);
 enableMatrixToolOutput($HOME_TEAM_SCORE_MATRIX);

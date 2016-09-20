@@ -9,7 +9,10 @@ $SPORTS_ABBREVIATIONS_ARRAY= array(
 					
 									"NAMES" => array(
 										"Green Bay" =>"GB",
-										"Seattle" => "SEA"
+										"Seattle" => "SEA",
+										"Minnesota" => "MN",
+										"Atlanta" => "ATL",
+										"Oakland" => "OAK"
 										)
 							),
 							array(

@@ -1,8 +1,10 @@
 <?php
 //$DEBUG=true;
 //$skipJSsettings=1;
+
 include_once "/opt/fpp/www/common.php";
-include_once "functions.inc.php";
+include_once 'functions.inc.php';
+include_once 'commonFunctions.inc.php';
 include_once 'SPORTS_ABBREVIATIONS.inc.php';
 include_once 'COLORS.inc.php';
 

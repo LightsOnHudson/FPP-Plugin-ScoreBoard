@@ -204,13 +204,14 @@ function getMatrixPosition($matrix,$team) {
 	switch ($team) {
 
 		case "HOME":
-			$position = "0,0";
+		//	$position = "0,0";
+			$position = "0";
 			break;
 				
 		case "AWAY":
 			//get the half and add 1 more over
 			$position = round(($MATRIX_WIDTH/2), 0, PHP_ROUND_HALF_UP)+1;
-			$position .= ",0";
+			//$position .= ",0";
 			//$position = ($MATRIX_WIDTH/2).",0";
 			break;
 	}
@@ -266,6 +267,24 @@ function getBlockData($matrix) {
 
 }
 
+function get_string_between($string, $start, $end){
+	$string = ' ' . $string;
+	$ini = strpos($string, $start);
+	if ($ini == 0) return '';
+	$ini += strlen($start);
+	$len = strpos($string, $end, $ini) - $ini;
+	return substr($string, $ini, $len);
+}
+
+//get the text status from the data line
+
+function getSportStatus($data) {
+
+	$SPORT_TEXT = "";
+	$SPORT_TEXT = get_string_between($data, "(", ")");
+	return $SPORT_TEXT;
+}
+//get the score from the data line
 function getSportScore($data, $teamName) {
 
 	//echo "extracting team score for: ".$teamName. " from data: ".$data."\n";
@@ -325,9 +344,9 @@ function updateMatrixMessage($matrix,$messageText,$color) {
 	
 }
 //function updateScoreOnMatrix($matrix, $team,$score,$pos,$color) {
-	function updateScoreOnMatrix($team_matrix, $team,$score,$score_matrix,$color,$name_pos="0,0",$score_pos="0,0") {
+	function updateScoreOnMatrix($team_matrix, $team,$score,$score_matrix,$color,$name_pos="0,0",$score_pos="0,0", $FONT_SIZE) {
 	//($AWAY_TEAM_MATRIX, $ABBR_AWAY_TEAM,$AWAY_SCORE,$AWAY_TEAM_SCORE_MATRIX,$AWAY_TEAM_COLOR);
-	global $pluginDirectory,$fpp_matrixtools_Plugin,$fpp_matrixtools_Plugin_Script,$FONT,$FONT_PATH,$FONT_SIZE,$MAX_SCORE_DIGITS;
+	global $pluginDirectory,$fpp_matrixtools_Plugin,$fpp_matrixtools_Plugin_Script,$FONT,$FONT_PATH,$MAX_SCORE_DIGITS;
 
 	if($color =="") {
 		$color = "white";
