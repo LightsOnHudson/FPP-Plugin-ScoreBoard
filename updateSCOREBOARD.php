@@ -140,7 +140,10 @@ if(file_exists($pluginDirectory."/". $fpp_matrixtools_Plugin."/".$fpp_matrixtool
 //getMatrixPosition($HOME_TEAM_MATRIX,"HOME");
 //getMatrixPosition($AWAY_TEAM_MATRIX,"AWAY");
 //print_r($pluginSettings);
-
+if($DEBUG) {
+	logEntry("Display game status: ".$DISPLAY_GAME_STATUS);
+	
+}
 
 //$FONT="calibri.ttf";
 
@@ -426,11 +429,12 @@ updateScoreOnMatrix($AWAY_TEAM_MATRIX, $ABBR_AWAY_TEAM,$AWAY_SCORE,$AWAY_TEAM_SC
 
 //update game status (FINAL...etc.)
 
-if($DEBUG) {
+if($DISPLAY_GAME_STATUS == "ON") {
 	logEntry("Writing Game Status Text");
-}	
-updateScoreOnMatrix($HOME_TEAM_MATRIX, $GAME_TEXT,$GAME_TEXT,$HOME_TEAM_MATRIX,"red",$TEXT_POS,$TEXT_POS, "8");
-	//updateScoreOnMatrix($HOME_TEAM_MATRIX, $GAME_TEXT,"","","red",$TEXT_POS,"","", "","10");//, $team, $score, $score_matrix, $color, 0", 0")
+
+	updateScoreOnMatrix($HOME_TEAM_MATRIX, $GAME_TEXT,$GAME_TEXT,$HOME_TEAM_MATRIX,"red",$TEXT_POS,$TEXT_POS, "8");
+}
+//updateScoreOnMatrix($HOME_TEAM_MATRIX, $GAME_TEXT,"","","red",$TEXT_POS,"","", "","10");//, $team, $score, $score_matrix, $color, 0", 0")
 
 	//renable while when we are done
 enableMatrixToolOutput($HOME_TEAM_MATRIX);

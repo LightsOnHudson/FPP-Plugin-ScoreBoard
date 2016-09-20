@@ -78,7 +78,7 @@ if(isset($_POST['submit']))
 		}
 		if(is_array($value)) {
 		//	echo "ARRAY: ".print_r(${value});
-			WriteSettingToFile($key,urlencode(implode(',',$value)));
+			WriteSettingToFile($key,urlencode(implode(',',$value)),$pluginName);
 		} else
 		
 	 		WriteSettingToFile($key,urlencode($value),$pluginName); 	
@@ -253,6 +253,12 @@ echo "  \n";
 echo "Away Team Color: \n";
 
 printColorSelect("AWAY_TEAM_COLOR",$AWAY_TEAM_COLOR);
+
+echo "<p/> \n";
+
+echo "Display Game Status (FINAL, 3rd QTR, ETC): ";
+
+PrintSettingCheckbox("DISPLAY GAME STATUS", "DISPLAY_GAME_STATUS", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = "");
 
 ?>
 <p/>
