@@ -429,6 +429,7 @@ updateScoreOnMatrix($AWAY_TEAM_MATRIX, $ABBR_AWAY_TEAM,$AWAY_SCORE,$AWAY_TEAM_SC
 if($DEBUG) {
 	logEntry("Writing Game Status Text");
 }	
+updateScoreOnMatrix($HOME_TEAM_MATRIX, $GAME_TEXT,$GAME_TEXT,$HOME_TEAM_MATRIX,"red",$TEXT_POS,$TEXT_POS, "8");
 	//updateScoreOnMatrix($HOME_TEAM_MATRIX, $GAME_TEXT,"","","red",$TEXT_POS,"","", "","10");//, $team, $score, $score_matrix, $color, 0", 0")
 
 	//renable while when we are done
